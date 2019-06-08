@@ -1,5 +1,6 @@
-import { SlideDoorState, SliderDoorSystem } from "./modules/slide-door";
+import { SlideDoorState, SliderDoorSystem } from "./modules/slide-door"
 import * as EthereumController from "@decentraland/EthereumController"
+import * as PipeMenu from "./modules/pipe-menu"
 
 const eth = EthereumController
 
@@ -13,28 +14,21 @@ executeTask(async () => {
   }
 })
 
+
 const myEntity = new Entity()
 const myText = new TextShape("Loading")
+
 myEntity.addComponent(myText)
 myEntity.addComponent(new Transform({
   position: new Vector3(-1, 5, -1),
 }))
 engine.addEntity(myEntity)
 
-/*
-const camera = Camera.instance
-
-export class CameraTrackSystem implements ISystem {
-  update() {
-    log(camera.position)
-    log(camera.rotation.eulerAngles)
-  }
-}
-
-engine.addSystem(new CameraTrackSystem())
-*/
-
+//
+// SCENE
+//
 let scene = new Entity()
+
 scene.addComponent(new GLTFShape("models/Location.gltf"))
 scene.addComponent(new Transform({
   position: new Vector3(-17, 0, -17),
@@ -54,7 +48,6 @@ objects.addComponent(new Transform({
 engine.addEntity(objects)
 
 
-
 let glasses = new Entity()
 glasses.addComponent(new GLTFShape("models/glasses.gltf"))
 glasses.addComponent(new Transform({
@@ -70,16 +63,16 @@ engine.addEntity(glasses)
 
 const doorPivot = new Entity()
 doorPivot.addComponent(new Transform())
+engine.addEntity(doorPivot)
 
 const doorLeft = new Entity()
+doorLeft.setParent(doorPivot)
 doorLeft.addComponent(new Transform(
 {
   position: new Vector3(-2.5, 2, 0),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(2, 4, 0.2)
 }))
-
-doorLeft.setParent(doorPivot)
 doorLeft.addComponent(new BoxShape())
 doorLeft.addComponent(new SlideDoorState(
   new Vector3(-1, 2, 0),
@@ -91,6 +84,7 @@ doorLeft.addComponent(
     openDoor(parent)
   })
 )
+engine.addEntity(doorLeft)
 
 const doorRight = new Entity()
 doorRight.addComponent(new Transform(
@@ -100,16 +94,11 @@ doorRight.addComponent(new Transform(
   scale: new Vector3(2, 4, 0.2)
 }))
 
-const emitMaterial = new Material();
-emitMaterial.emissiveColor = Color3.Blue()
-emitMaterial.emissiveIntensity = 5;
-
 doorRight.setParent(doorPivot)
 doorRight.addComponent(new BoxShape())
-doorRight.addComponent(emitMaterial)
 doorRight.addComponent(new SlideDoorState(
   new Vector3(1, 2, 0),
-new Vector3(2.5, 2, 0)
+  new Vector3(2.5, 2, 0)
 ))
 doorRight.addComponent(
   new OnClick(e => {
@@ -117,12 +106,7 @@ doorRight.addComponent(
     openDoor(parent)
   })
 )
-
-engine.addEntity(doorPivot)
-engine.addEntity(doorLeft)
 engine.addEntity(doorRight)
-
-engine.addSystem(new SliderDoorSystem())
 
 function openDoor(parent: IEntity){
   for(let id in parent.children){
@@ -132,14 +116,24 @@ function openDoor(parent: IEntity){
   }   
 }
 
-
-
 const RedMaterial = new Material()
 RedMaterial.albedoColor = Color3.Red()
 
 const btn = new Entity()
+const btnTexture = new Texture("textures/w1.png")
+
+// Create material
+let btnMaterial = new Material()
+
+btnMaterial.transparencyMode = 3
+btnMaterial.albedoTexture = btnTexture
+btnMaterial.alpha = 0.5
+
+// Add material to wheels
+btn.addComponent(btnMaterial)
+
 btn.addComponent(new BoxShape())
-btn.addComponent(RedMaterial)
+//btn.addComponent(RedMaterial)
 btn.addComponent(new Transform(
   {
     position: new Vector3(-1, 2, -1),
@@ -161,3 +155,66 @@ btn.addComponent(
   })
 )
 engine.addEntity(btn)
+
+//
+// PIPES
+//
+
+for (let i = 0; i < 5; i++) {
+
+  var entity = new Entity("Pipe " + i)
+  const pipe = new PipeMenu.Pipe();
+
+  pipe.items = [
+    new PipeMenu.Item('models/glasses.gltf', .01, 1),
+    new PipeMenu.Item('models/glasses.gltf', .02, 3),
+    new PipeMenu.Item('models/glasses.gltf', .03, 3),
+    new PipeMenu.Item('models/glasses.gltf', .02, 3),
+    new PipeMenu.Item('models/glasses.gltf', .01, 5)
+  ]
+
+  entity.addComponent(pipe)
+  entity.addComponent(new Transform({
+    position: new Vector3(i * 3, 1, 8)
+  }))
+
+  const nextButton = new Entity("Pipe " + i + " next")
+  nextButton.setParent(entity)
+  nextButton.addComponent(new PipeMenu.Button(pipe, entity, "next"))
+  nextButton.addComponent(new BoxShape())
+  nextButton.addComponent(new Transform({
+    position: new Vector3(-0.5, 1, 0),
+    scale: new Vector3(.3, .3, .3)
+  }))
+
+  const prevButton = new Entity("Pipe " + i + " prev")
+  prevButton.setParent(entity)
+  prevButton.addComponent(new PipeMenu.Button(pipe, entity, "prev"))
+  prevButton.addComponent(new BoxShape())
+  prevButton.addComponent(new Transform({
+    position: new Vector3(0.5, 1, 0),
+    scale: new Vector3(.3, .3, .3)
+  }))
+
+  const buyButton = new Entity("Pipe " + i + " buy")
+  buyButton.setParent(entity)
+  buyButton.addComponent(new PipeMenu.Button(pipe, entity, "buy"))
+  buyButton.addComponent(new BoxShape())
+  buyButton.addComponent(new Transform({
+    position: new Vector3(0, 2, 0),
+    scale: new Vector3(.3, .3, .3)
+  }))
+
+  engine.addEntity(entity)
+  engine.addEntity(nextButton)
+  engine.addEntity(prevButton)
+  engine.addEntity(buyButton)
+}
+
+var pipeSystem = new PipeMenu.PipeMenuSystem();
+engine.addSystem(pipeSystem)
+engine.addSystem(new SliderDoorSystem())
+
+pipeSystem.init();
+
+log("LOADING OK")
