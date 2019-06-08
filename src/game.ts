@@ -1,51 +1,113 @@
-/// --- Set up a system ---
+import { SlideDoorState, SliderDoorSystem } from "./modules/slide-door";
 
-class RotatorSystem {
-  // this group will contain every entity that has a Transform component
-  group = engine.getComponentGroup(Transform)
+/*
+const camera = Camera.instance
 
-  update(dt: number) {
-    // iterate over the entities of the group
-    for (let entity of this.group.entities) {
-      // get the Transform component of the entity
-      const transform = entity.getComponent(Transform)
-
-      // mutate the rotation
-      transform.rotate(Vector3.Up(), dt * 10)
-    }
+export class CameraTrackSystem implements ISystem {
+  update() {
+    log(camera.position)
+    log(camera.rotation.eulerAngles)
   }
 }
 
-// Add a new instance of the system to the engine
-engine.addSystem(new RotatorSystem())
+engine.addSystem(new CameraTrackSystem())
+*/
 
-/// --- Spawner function ---
+let scene = new Entity()
+scene.addComponent(new GLTFShape("models/Location.gltf"))
+scene.addComponent(new Transform({
+  position: new Vector3(-17, 0, -17),
+  rotation: Quaternion.Euler(0, 0, 0),
+  scale: new Vector3(3, 3, 3)
+}))
+engine.addEntity(scene)
 
-function spawnCube(x: number, y: number, z: number) {
-  // create the entity
-  const cube = new Entity()
 
-  // add a transform to the entity
-  cube.addComponent(new Transform({ position: new Vector3(x, y, z) }))
+let objects = new Entity()
+objects.addComponent(new GLTFShape("models/objects.gltf"))
+objects.addComponent(new Transform({
+  position: new Vector3(-17, 0, -17),
+  rotation: Quaternion.Euler(0, 0, 0),
+  scale: new Vector3(3, 3, 3)
+}))
+engine.addEntity(objects)
 
-  // add a shape to the entity
-  cube.addComponent(new BoxShape())
 
-  // add the entity to the engine
-  engine.addEntity(cube)
 
-  return cube
-}
+let glasses = new Entity()
+glasses.addComponent(new GLTFShape("models/glasses.gltf"))
+glasses.addComponent(new Transform({
+  position: new Vector3(7, 0.1, 7),
+  rotation: Quaternion.Euler(0, 0, 0),
+  scale: new Vector3(0.01, 0.01, 0.01)
+}))
+engine.addEntity(glasses)
 
-/// --- Spawn a cube ---
+//
+// DOOR
+//
 
-const cube = spawnCube(5, 1, 5)
+const doorPivot = new Entity()
+doorPivot.addComponent(new Transform())
 
-cube.addComponent(
-  new OnClick(() => {
-    cube.getComponent(Transform).scale.z *= 1.1
-    cube.getComponent(Transform).scale.x *= 0.9
+//let collideBox = new BoxShape()
+//collideBox.withCollisions = true
+//doorPivot.addComponent(collideBox);
 
-    spawnCube(Math.random() * 8 + 1, Math.random() * 8, Math.random() * 8 + 1)
+const doorLeft = new Entity()
+doorLeft.addComponent(new Transform(
+{
+  position: new Vector3(-2.5, 2, 0),
+  rotation: Quaternion.Euler(0, 0, 0),
+  scale: new Vector3(2, 4, 0.2)
+}))
+
+doorLeft.setParent(doorPivot)
+doorLeft.addComponent(new BoxShape())
+doorLeft.addComponent(new SlideDoorState(
+  new Vector3(-1, 2, 0),
+  new Vector3(-2.5, 2, 0)
+))
+doorLeft.addComponent(
+  new OnClick(e => {
+    let parent = doorLeft.getParent()
+    openDoor(parent)
   })
 )
+
+const doorRight = new Entity()
+doorRight.addComponent(new Transform(
+{
+  position: new Vector3(2.5, 2, 0),
+  rotation: Quaternion.Euler(0, 0, 0),
+  scale: new Vector3(2, 4, 0.2)
+}))
+
+doorRight.setParent(doorPivot)
+doorRight.addComponent(new BoxShape())
+doorRight.addComponent(new SlideDoorState(
+  new Vector3(1, 2, 0),
+new Vector3(2.5, 2, 0)
+))
+doorRight.addComponent(
+  new OnClick(e => {
+    let parent = doorLeft.getParent()
+    openDoor(parent)
+  })
+)
+
+engine.addEntity(doorPivot)
+engine.addEntity(doorLeft)
+engine.addEntity(doorRight)
+
+engine.addSystem(new SliderDoorSystem())
+
+function openDoor(parent: IEntity){
+  for(let id in parent.children){
+    const child = parent.children[id]
+    let state = child.getComponent(SlideDoorState)
+    state.closed = !state.closed
+  }   
+}
+
+debugger
