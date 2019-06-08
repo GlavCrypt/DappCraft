@@ -31,7 +31,7 @@ let scene = new Entity()
 
 scene.addComponent(new GLTFShape("models/Location.gltf"))
 scene.addComponent(new Transform({
-  position: new Vector3(-17, 0, -17),
+  position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
@@ -41,7 +41,7 @@ engine.addEntity(scene)
 let objects = new Entity()
 objects.addComponent(new GLTFShape("models/objects.gltf"))
 objects.addComponent(new Transform({
-  position: new Vector3(-17, 0, -17),
+  position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
@@ -160,6 +160,22 @@ engine.addEntity(btn)
 // PIPES
 //
 
+const pipesPositions:Vector3[] = [
+  new Vector3(13.7,1.5,11.2),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+]
+
+const pipesRotations:Vector3[] = [
+  new Vector3(0,-115,0),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+  new Vector3(),
+]
+
 for (let i = 0; i < 5; i++) {
 
   var entity = new Entity("Pipe " + i)
@@ -175,7 +191,8 @@ for (let i = 0; i < 5; i++) {
 
   entity.addComponent(pipe)
   entity.addComponent(new Transform({
-    position: new Vector3(i * 3, 1, 8)
+    position: pipesPositions[i],
+    rotation: Quaternion.Euler(pipesRotations[i].x, pipesRotations[i].y, pipesRotations[i].z)
   }))
 
   const nextButton = new Entity("Pipe " + i + " next")
