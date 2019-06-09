@@ -23,23 +23,20 @@ const myText = new TextShape("Loading")
 myEntity.addComponent(myText)
 myEntity.addComponent(new Transform({
   position: new Vector3(-1, 5, -1),
+  scale: new Vector3(0.05, 0.05, 0.05)
 }))
 engine.addEntity(myEntity)
 
 //
 // OBSERVATORY
 //
-let observatory = new Entity()
-let observatoryTexture = new Texture("textures/observatory.png")
-let observatoryMaterial = new Material()
-observatoryMaterial.albedoTexture = observatoryTexture
 
-observatory.addComponent(new GLTFShape("models/Location.gltf"))
-observatory.addComponentOrReplace(observatoryMaterial)
+let observatory = new Entity()
+observatory.addComponent(new GLTFShape("models/scene.gltf"))
 observatory.addComponent(new Transform({
   position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
-  scale: new Vector3(3, 3, 3)
+  scale: new Vector3(0.075, 0.075, 0.075)
 }))
 engine.addEntity(observatory)
 
@@ -58,10 +55,11 @@ engine.addEntity(interior)
 //
 // GLASSES
 //
+
 let glasses = new Entity()
 glasses.addComponent(new GLTFShape("models/glasses.gltf"))
 glasses.addComponent(new Transform({
-  position: new Vector3(7, 0.1, 7),
+  position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(0.01, 0.01, 0.01)
 }))
@@ -71,21 +69,27 @@ engine.addEntity(glasses)
 // DOOR
 //
 const doorPivot = new Entity()
-doorPivot.addComponent(new Transform())
+//doorPivot.addComponent(new Transform())
+doorPivot.addComponent(new Transform(
+  {
+    position: new Vector3(6.7, 0, 7.8),
+    rotation: Quaternion.Euler(0, 0, 0)
+  }))
 engine.addEntity(doorPivot)
+
 
 const doorLeft = new Entity()
 doorLeft.setParent(doorPivot)
 doorLeft.addComponent(new Transform(
 {
-  position: new Vector3(6.7, 0, 7.8),
+  position: new Vector3(1.2, 0, .2),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
 doorLeft.addComponent(new GLTFShape("models/Loc_door_L.gltf"))
 doorLeft.addComponent(new SlideDoorState(
-  new Vector3(7.8, 0, 7.85),
-  new Vector3(6.7, 0, 7.85)
+  new Vector3(1.2, 0, .2),
+  new Vector3(0.2, 0, -0.13)
 ))
 doorLeft.addComponent(
   new OnClick(e => {
@@ -98,15 +102,15 @@ engine.addEntity(doorLeft)
 const doorRight = new Entity()
 doorRight.addComponent(new Transform(
 {
-  position: new Vector3(9.3, 0, 8),
+  position: new Vector3(1.3, 0, .2),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
 doorRight.setParent(doorPivot)
 doorRight.addComponent(new GLTFShape("models/Loc_door_R.gltf"))
 doorRight.addComponent(new SlideDoorState(
-  new Vector3(8, 0, 8),
-  new Vector3(9.3, 0, 8)
+  new Vector3(1.3, 0, .2),
+  new Vector3(2.5, 0, .1)
 ))
 doorRight.addComponent(
   new OnClick(e => {
@@ -129,9 +133,9 @@ function openDoor(parent: IEntity){
 //
 const btn = new Entity()
 const redMaterial = new Material()
-//redMaterial.albedoColor = Color3.Red()
+redMaterial.albedoColor = Color3.Red()
 btn.addComponent(new BoxShape())
-btn.addComponent(observatoryMaterial)
+//btn.addComponent(observatoryMaterial)
 btn.addComponent(new Transform(
   {
     position: new Vector3(-1, 2, -1),
@@ -158,9 +162,9 @@ engine.addEntity(btn)
 // PIPES
 //
 const pipesPositions:Vector3[] = [
-  new Vector3(13.7,1.5,11.2),
-  new Vector3(14.6,1.5,8.9),
-  new Vector3(15.0,1.5,6.6),
+  new Vector3(13.8,1.5,11.3),
+  new Vector3(14.7,1.5,9.0),
+  new Vector3(15.1,1.5,6.7),
   new Vector3(),
   new Vector3(),
 ]
@@ -177,11 +181,11 @@ for (let i = 0; i < 5; i++) {
   var entity = new Entity("Pipe " + i)
   const pipe = new PipeMenu.Pipe();
   pipe.items = [
-    new PipeMenu.Item('models/glasses.gltf', .01, 1),
-    new PipeMenu.Item('models/glasses.gltf', .02, 3),
-    new PipeMenu.Item('models/glasses.gltf', .03, 3),
-    new PipeMenu.Item('models/glasses.gltf', .02, 3),
-    new PipeMenu.Item('models/glasses.gltf', .01, 5)
+    new PipeMenu.Item('models/helmet.gltf', .03, 1, new Vector3(0, -1, 0)),
+    new PipeMenu.Item('models/glasses.gltf', .008, 3, new Vector3(0, 0, 0)),
+    new PipeMenu.Item('models/helmet.gltf', .03, 3, new Vector3(0, -1, 0)),
+    new PipeMenu.Item('models/glasses.gltf', .008, 3, new Vector3(0, 0, 0)),
+    new PipeMenu.Item('models/helmet.gltf', .03, 5, new Vector3(0, -1, 0))
   ]
   
   entity.addComponent(pipe)

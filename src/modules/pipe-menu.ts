@@ -3,11 +3,13 @@ export class Item {
     title: string
     price: number
     size: number
+    position: Vector3
 
-    constructor(model: string, size: number, price: number) {
+    constructor(model: string, size: number, price: number, position: Vector3) {
         this.model = model
         this.price = price
         this.size = size
+        this.position = position
     }
 }
 
@@ -106,7 +108,8 @@ export class PipeMenuSystem implements ISystem
             result.addComponent(new GLTFShape(item.model))
 
         result.addComponent(new Transform({
-            scale: new Vector3(item.size, item.size, item.size)
+            scale: new Vector3(item.size, item.size, item.size),
+            position: item.position
         }))
 
         engine.addEntity(result)
@@ -121,7 +124,8 @@ export class PipeMenuSystem implements ISystem
             entity.addComponentOrReplace(new GLTFShape(item.model))
 
         entity.addComponentOrReplace(new Transform({
-            scale: new Vector3(item.size, item.size, item.size)
+            scale: new Vector3(item.size, item.size, item.size),
+            position: item.position
         }))
     }
 }

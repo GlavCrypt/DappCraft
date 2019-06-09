@@ -1,7 +1,7 @@
 // custom component to handle opening and closing doors
 @Component('slideDoorState')
 export class SlideDoorState {
-  closed: boolean = false
+  closed: boolean = true
   fraction: number = 1
   closedPos: Vector3
   openPos: Vector3
