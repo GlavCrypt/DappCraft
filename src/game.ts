@@ -30,7 +30,12 @@ engine.addEntity(myEntity)
 // OBSERVATORY
 //
 let observatory = new Entity()
+let observatoryTexture = new Texture("textures/observatory.png")
+let observatoryMaterial = new Material()
+observatoryMaterial.albedoTexture = observatoryTexture
+
 observatory.addComponent(new GLTFShape("models/Location.gltf"))
+observatory.addComponentOrReplace(observatoryMaterial)
 observatory.addComponent(new Transform({
   position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
@@ -73,14 +78,14 @@ const doorLeft = new Entity()
 doorLeft.setParent(doorPivot)
 doorLeft.addComponent(new Transform(
 {
-  position: new Vector3(-2.5, 2, 0),
+  position: new Vector3(6.7, 0, 7.8),
   rotation: Quaternion.Euler(0, 0, 0),
-  scale: new Vector3(2, 4, 0.2)
+  scale: new Vector3(3, 3, 3)
 }))
-doorLeft.addComponent(new BoxShape())
+doorLeft.addComponent(new GLTFShape("models/Loc_door_L.gltf"))
 doorLeft.addComponent(new SlideDoorState(
-  new Vector3(-1, 2, 0),
-  new Vector3(-2.5, 2, 0)
+  new Vector3(7.8, 0, 7.85),
+  new Vector3(6.7, 0, 7.85)
 ))
 doorLeft.addComponent(
   new OnClick(e => {
@@ -93,15 +98,15 @@ engine.addEntity(doorLeft)
 const doorRight = new Entity()
 doorRight.addComponent(new Transform(
 {
-  position: new Vector3(2.5, 2, 0),
+  position: new Vector3(9.3, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
-  scale: new Vector3(2, 4, 0.2)
+  scale: new Vector3(3, 3, 3)
 }))
 doorRight.setParent(doorPivot)
-doorRight.addComponent(new BoxShape())
+doorRight.addComponent(new GLTFShape("models/Loc_door_R.gltf"))
 doorRight.addComponent(new SlideDoorState(
-  new Vector3(1, 2, 0),
-  new Vector3(2.5, 2, 0)
+  new Vector3(8, 0, 8),
+  new Vector3(9.3, 0, 8)
 ))
 doorRight.addComponent(
   new OnClick(e => {
@@ -124,9 +129,9 @@ function openDoor(parent: IEntity){
 //
 const btn = new Entity()
 const redMaterial = new Material()
-redMaterial.albedoColor = Color3.Red()
+//redMaterial.albedoColor = Color3.Red()
 btn.addComponent(new BoxShape())
-btn.addComponent(redMaterial)
+btn.addComponent(observatoryMaterial)
 btn.addComponent(new Transform(
   {
     position: new Vector3(-1, 2, -1),
