@@ -4,6 +4,10 @@ import * as PipeMenu from "./modules/pipe-menu"
 
 const eth = EthereumController
 
+
+//
+// ETHEREUM ADDRESS
+//
 executeTask(async () => {
   try {
     const address = await eth.getUserAccount()
@@ -14,10 +18,8 @@ executeTask(async () => {
   }
 })
 
-
 const myEntity = new Entity()
 const myText = new TextShape("Loading")
-
 myEntity.addComponent(myText)
 myEntity.addComponent(new Transform({
   position: new Vector3(-1, 5, -1),
@@ -25,29 +27,32 @@ myEntity.addComponent(new Transform({
 engine.addEntity(myEntity)
 
 //
-// SCENE
+// OBSERVATORY
 //
-let scene = new Entity()
-
-scene.addComponent(new GLTFShape("models/Location.gltf"))
-scene.addComponent(new Transform({
+let observatory = new Entity()
+observatory.addComponent(new GLTFShape("models/Location.gltf"))
+observatory.addComponent(new Transform({
   position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
-engine.addEntity(scene)
+engine.addEntity(observatory)
 
-
-let objects = new Entity()
-objects.addComponent(new GLTFShape("models/objects.gltf"))
-objects.addComponent(new Transform({
+//
+// INTERIOR
+//
+let interior = new Entity()
+interior.addComponent(new GLTFShape("models/objects.gltf"))
+interior.addComponent(new Transform({
   position: new Vector3(8, 0, 8),
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(3, 3, 3)
 }))
-engine.addEntity(objects)
+engine.addEntity(interior)
 
-
+//
+// GLASSES
+//
 let glasses = new Entity()
 glasses.addComponent(new GLTFShape("models/glasses.gltf"))
 glasses.addComponent(new Transform({
@@ -60,7 +65,6 @@ engine.addEntity(glasses)
 //
 // DOOR
 //
-
 const doorPivot = new Entity()
 doorPivot.addComponent(new Transform())
 engine.addEntity(doorPivot)
@@ -93,7 +97,6 @@ doorRight.addComponent(new Transform(
   rotation: Quaternion.Euler(0, 0, 0),
   scale: new Vector3(2, 4, 0.2)
 }))
-
 doorRight.setParent(doorPivot)
 doorRight.addComponent(new BoxShape())
 doorRight.addComponent(new SlideDoorState(
@@ -116,24 +119,14 @@ function openDoor(parent: IEntity){
   }   
 }
 
-const RedMaterial = new Material()
-RedMaterial.albedoColor = Color3.Red()
-
+//
+// TEST BUTTON
+//
 const btn = new Entity()
-const btnTexture = new Texture("textures/w1.png")
-
-// Create material
-let btnMaterial = new Material()
-
-btnMaterial.transparencyMode = 3
-btnMaterial.albedoTexture = btnTexture
-btnMaterial.alpha = 0.5
-
-// Add material to wheels
-btn.addComponent(btnMaterial)
-
+const redMaterial = new Material()
+redMaterial.albedoColor = Color3.Red()
 btn.addComponent(new BoxShape())
-//btn.addComponent(RedMaterial)
+btn.addComponent(redMaterial)
 btn.addComponent(new Transform(
   {
     position: new Vector3(-1, 2, -1),
@@ -142,12 +135,12 @@ btn.addComponent(new Transform(
   }))
 btn.addComponent(
   new OnClick(e => {
-    RedMaterial.albedoColor = Color3.White()
+    redMaterial.albedoColor = Color3.White()
     executeTask(async () => {
       try {
         await eth.requirePayment('0x2b70046B540fc32d5AF3fd6B6B8c1096f7328700', 0.001, "ETH")
         log("Succsessfull")
-        RedMaterial.albedoColor = Color3.Red()
+        redMaterial.albedoColor = Color3.Red()
       } catch (error) {
         log("Failed")
       }
@@ -159,28 +152,25 @@ engine.addEntity(btn)
 //
 // PIPES
 //
-
 const pipesPositions:Vector3[] = [
   new Vector3(13.7,1.5,11.2),
-  new Vector3(),
-  new Vector3(),
+  new Vector3(14.6,1.5,8.9),
+  new Vector3(15.0,1.5,6.6),
   new Vector3(),
   new Vector3(),
 ]
 
 const pipesRotations:Vector3[] = [
   new Vector3(0,-115,0),
-  new Vector3(),
-  new Vector3(),
+  new Vector3(0,-100,0),
+  new Vector3(0,-100,0),
   new Vector3(),
   new Vector3(),
 ]
 
 for (let i = 0; i < 5; i++) {
-
   var entity = new Entity("Pipe " + i)
   const pipe = new PipeMenu.Pipe();
-
   pipe.items = [
     new PipeMenu.Item('models/glasses.gltf', .01, 1),
     new PipeMenu.Item('models/glasses.gltf', .02, 3),
@@ -188,7 +178,7 @@ for (let i = 0; i < 5; i++) {
     new PipeMenu.Item('models/glasses.gltf', .02, 3),
     new PipeMenu.Item('models/glasses.gltf', .01, 5)
   ]
-
+  
   entity.addComponent(pipe)
   entity.addComponent(new Transform({
     position: pipesPositions[i],
