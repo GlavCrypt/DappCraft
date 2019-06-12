@@ -20,6 +20,7 @@ export class Observatory {
     this.createDomeAndInterior();
     this.createDoors();
     this.createPipeMenus();
+    this.createScreenMenu();
   }
   
   /**
@@ -94,5 +95,33 @@ export class Observatory {
       );
       menu.group.setParent(this.group);
     }
+  }
+  
+  /**
+   * Add the screen menu.
+   */
+  public createScreenMenu() {
+    
+    let screenGroup = new Entity();
+    screenGroup.setParent(this.group);
+    screenGroup.addComponent(new Transform({ // Please help with this transform lol, I don't have the actual screen transform.
+      position: new Vector3(-3, 6, -3),
+      rotation: Quaternion.RotationQuaternionFromAxis(new Vector3(-.7, 0, 0.7), new Vector3(0.7, 0, -0.7), new Vector3(0, 1, 0))
+    }));
+    
+    let screen = new Entity();
+    screen.addComponent(new BoxShape());
+    screen.addComponent(new Transform({scale: new Vector3(4, 0.1, 3)}));
+    screen.setParent(screenGroup);
+    
+    let aboutButton = new Entity();
+    aboutButton.addComponent(new BoxShape());
+    aboutButton.addComponent(new Transform({position: new Vector3(-1, 0.1, 0.75), scale: new Vector3(1, 0.1, 0.5)}));
+    aboutButton.setParent(screenGroup);
+    
+    let recipesButton = new Entity();
+    recipesButton.addComponent(new BoxShape());
+    recipesButton.addComponent(new Transform({position: new Vector3(-1, 0.1, -0.75), scale: new Vector3(1, 0.1, 0.5)}));
+    recipesButton.setParent(screenGroup);
   }
 }
