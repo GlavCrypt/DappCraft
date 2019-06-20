@@ -27,10 +27,11 @@ export class PipeMenu {
     // Next button.
     const nextButton = new Entity("Pipe " + id + " next")
     nextButton.setParent(this.group);
-    nextButton.addComponent(new BoxShape());
+    nextButton.addComponent(new ConeShape());
     nextButton.addComponent(new Transform({
       position: new Vector3(-0.5, 1, 0),
-      scale: new Vector3(.3, .3, .3)
+      scale: new Vector3(.15, .1, 0.01),
+      rotation: Quaternion.Euler(0, 0, 90)
     }));
     nextButton.addComponent(new OnClick(() => {
       this.clickNext();
@@ -39,10 +40,11 @@ export class PipeMenu {
     // Prev button.
     const prevButton = new Entity("Pipe " + id + " prev")
     prevButton.setParent(this.group);
-    prevButton.addComponent(new BoxShape())
+    prevButton.addComponent(new ConeShape())
     prevButton.addComponent(new Transform({
       position: new Vector3(0.5, 1, 0),
-      scale: new Vector3(.3, .3, .3)
+      scale: new Vector3(.15, .1, 0.01),
+      rotation: Quaternion.Euler(0, 0, -90)
     }));
     prevButton.addComponent(new OnClick(() => {
       this.clickPrev();
@@ -54,7 +56,7 @@ export class PipeMenu {
     buyButton.addComponent(new BoxShape())
     buyButton.addComponent(new Transform({
       position: new Vector3(0, 1, 0),
-      scale: new Vector3(.3, .3, .3)
+      scale: new Vector3(.3, .3, 0.01),
     }));
     buyButton.addComponent(new OnClick(() => {
       this.clickBuy();

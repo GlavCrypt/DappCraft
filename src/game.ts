@@ -1,8 +1,9 @@
 import {Observatory} from 'modules/observatory';
 import {SliderDoorSystem} from 'modules/door';
+import {requirePayment} from "@decentraland/EthereumController";
 
 // OBSERVATORY
-let obs = new Observatory(new Transform({position: new Vector3(16, 0, 16)}));
+let obs = new Observatory(new Transform({position: new Vector3(16, 0, 16)}), requirePayment);
 engine.addEntity(obs.group);
 
 // Make sure the doors get animated.

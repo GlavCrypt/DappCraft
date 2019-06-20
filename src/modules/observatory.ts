@@ -1,5 +1,6 @@
 import {Door, SlideDoorState} from 'door';
 import {PipeMenu, MenuItem} from 'pipemenu';
+import {BuyScreen} from 'buyscreen';
 
 /**
  * A class to manage the entire observatory set of entities.
@@ -11,7 +12,7 @@ export class Observatory {
   /**
    * Construct a new observatory at the given transform.
    */
-  constructor(transform: Transform) {
+  constructor(transform: Transform, requirePayment) {
     
     // Group to contain entities.
     this.group = new Entity();
@@ -20,7 +21,7 @@ export class Observatory {
     this.createDomeAndInterior();
     this.createDoors();
     this.createPipeMenus();
-    this.createScreenMenu();
+    this.createScreenMenu(requirePayment);
   }
   
   /**
@@ -100,28 +101,15 @@ export class Observatory {
   /**
    * Add the screen menu.
    */
-  public createScreenMenu() {
-    
-    let screenGroup = new Entity();
-    screenGroup.setParent(this.group);
-    screenGroup.addComponent(new Transform({ // Please help with this transform lol, I don't have the actual screen transform.
-      position: new Vector3(-3, 6, -3),
-      rotation: Quaternion.RotationQuaternionFromAxis(new Vector3(-.7, 0, 0.7), new Vector3(0.7, 0, -0.7), new Vector3(0, 1, 0))
-    }));
-    
-    let screen = new Entity();
-    screen.addComponent(new BoxShape());
-    screen.addComponent(new Transform({scale: new Vector3(4, 0.1, 3)}));
-    screen.setParent(screenGroup);
-    
-    let aboutButton = new Entity();
-    aboutButton.addComponent(new BoxShape());
-    aboutButton.addComponent(new Transform({position: new Vector3(-1, 0.1, 0.75), scale: new Vector3(1, 0.1, 0.5)}));
-    aboutButton.setParent(screenGroup);
-    
-    let recipesButton = new Entity();
-    recipesButton.addComponent(new BoxShape());
-    recipesButton.addComponent(new Transform({position: new Vector3(-1, 0.1, -0.75), scale: new Vector3(1, 0.1, 0.5)}));
-    recipesButton.setParent(screenGroup);
+  public createScreenMenu(requirePayment) {
+    let screenMenu = new BuyScreen(
+      new Transform({
+        position: new Vector3(-3.1, 5.5, -3),
+        rotation: new Quaternion(-0.3075095991233633, -0.5218383131268737, -0.7688128993119207, 0.20505937494171264),
+        scale: new Vector3(1, 1, 1)
+      }),
+      this.group,
+      requirePayment // for some reason, importing this inside BuyScreen.ts broke everything.
+    );
   }
 }
